@@ -57,5 +57,10 @@ module.exports = {
         node: true,
       },
     },
+    {
+      "env": {
+        "node": true
+      }
+    },
   ],
 };
