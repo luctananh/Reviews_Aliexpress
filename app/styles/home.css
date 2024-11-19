@@ -25,6 +25,7 @@
 }
 
 .custom-navbar2 {
+  
   background-color: #fff; /* Đổi màu nền */
   border-radius: 10px; /* Bo góc navbar */
   /* border: solid 2px; */
@@ -46,10 +47,12 @@
   padding: 70px 10px;
 }
 h1 {
+  display: flex;
+  align-items: center;
+  
   color: gray; /* Màu chữ */
   font-weight: bold; /* Làm chữ đậm */
   font-size: 20px; /* Kích thước chữ lớn */
-  margin-bottom: 10px; /* Khoảng cách dưới */
   text-transform: uppercase; /* Chuyển tất cả chữ thành in hoa */
   letter-spacing: 2px; /* Khoảng cách giữa các chữ */
   line-height: 1.2; /* Khoảng cách giữa các dòng */
@@ -59,7 +62,7 @@ h1 {
   display: flex;
 
   justify-content: space-between;
-  padding: 10px 0px 10px 20px;
+  padding: 10px 0px 10px 15px;
 }
 .add_button img {
   height: 15px;
