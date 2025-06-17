@@ -35,7 +35,10 @@
     "react-toastify": "^10.0.5",
     "remix-auth": "^3.7.0",
     "remix-auth-auth0": "^1.7.0",
-    "sonner": "^1.5.0"
+    "sonner": "^1.5.0",
+    "@react-aria/interactions": "^3.21.0",
+    "@react-aria/utils": "^3.22.0",
+    "@react-stately/utils": "^3.8.2",
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",
