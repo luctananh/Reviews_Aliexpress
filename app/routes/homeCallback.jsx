@@ -6,7 +6,6 @@ export const loader = ({ request }) => {
     failureRedirect: "",
   });
 };
-
 export default function Auth0CallbackRoute() {
   return null;
 }
