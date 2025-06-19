@@ -1,6 +1,6 @@
-const { createServerClient, serialize, parse } = require("@supabase/ssr");
+import { createServerClient, serialize, parse } from "@supabase/ssr";
 
-function createClient(request) {
+export function createClient(request) {
   const cookies = parse(request.headers.get("Cookie") ?? "");
   const headers = new Headers();
 
@@ -22,5 +22,3 @@ function createClient(request) {
     }
   );
 }
-
-module.exports = { createClient };

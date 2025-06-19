@@ -5,7 +5,7 @@ import { Link } from "@nextui-org/react";
 import { Form, useLoaderData, useFetcher } from "@remix-run/react";
 import { json } from "@remix-run/node";
 // import { createClient } from "~/utils/supabase.server";
-import { createClient } from "~/utils/supabase.server";
+import { createClient } from "../utils/supabase.server";
 import "../styles/index.css";
 import {
   Navbar,
