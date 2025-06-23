@@ -6,7 +6,7 @@ import { Auth0Strategy } from "remix-auth-auth0";
 const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "_auth_session",
-    sameSite: "none",
+    sameSite: "lax",
     path: "/",
     httpOnly: true,
     secrets: ["ZySbrdFDYXG2o/a6XG+XaTQp7fSoKsbGBnTcXkQ7Uzc="],
