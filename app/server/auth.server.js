@@ -1,4 +1,4 @@
-import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import { createCookieSessionStorage, redirect } from "@remix-run/node"; // Import redirect
 import { Authenticator } from "remix-auth";
 import { Auth0Strategy } from "remix-auth-auth0";
 
@@ -6,10 +6,10 @@ import { Auth0Strategy } from "remix-auth-auth0";
 const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "_auth_session",
-    sameSite: "lax",
+    sameSite: "none",
     path: "/",
     httpOnly: true,
-    secrets: [process.env.SESSION_SECRET || "a_fallback_secret_for_development_only"],
+    secrets: [process.env.SESSION_SECRET || "a_fallback_secret_for_development_only"], // Sử dụng biến môi trường
     secure: process.env.NODE_ENV === "production",
     maxAge: 60 * 60 * 24 * 7, //7 ngày
   },
@@ -39,7 +39,7 @@ export const logout = async (request) => {
   const session = await sessionStorage.getSession(
     request.headers.get("Cookie")
   );
-  return redirect("/_index", {
+  return redirect(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : "/", { // Sử dụng biến động
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },

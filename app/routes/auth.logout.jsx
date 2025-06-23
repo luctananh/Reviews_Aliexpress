@@ -4,10 +4,10 @@ import { authenticator } from "../server/auth.server.js";
 export const action = async ({ request }) => {
   const auth0Domain = "dev-c841kfnfmsjcrhcr.us.auth0.com";
   const clientId = "UpT0esnQTQjHDg2wBr4MMBQexfZvsFs2";
-  const returnTo = "https://reviews-aliexpress-bgp5zv8t6-lucanhs-projects.vercel.app/";
+  const returnTo = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : "/";
 
   await authenticator.logout(request, {
-    redirectTo: "https://reviews-aliexpress-bgp5zv8t6-lucanhs-projects.vercel.app/",
+    redirectTo: returnTo, // Sử dụng biến động
   });
 
   return redirect(
