@@ -1,4 +1,4 @@
-import { createCookieSessionStorage, redirect } from "@remix-run/node"; // Import redirect
+import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator } from "remix-auth";
 import { Auth0Strategy } from "remix-auth-auth0";
 

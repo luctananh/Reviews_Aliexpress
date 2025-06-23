@@ -4,7 +4,7 @@ import { authenticator } from "../server/auth.server.js";
 export const action = async ({ request }) => {
   const auth0Domain = "dev-c841kfnfmsjcrhcr.us.auth0.com";
   const clientId = "UpT0esnQTQjHDg2wBr4MMBQexfZvsFs2";
-  const returnTo = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : "/";
+  const returnTo = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : "/"; // Sử dụng biến động
 
   await authenticator.logout(request, {
     redirectTo: returnTo, // Sử dụng biến động
