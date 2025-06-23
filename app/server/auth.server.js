@@ -1,4 +1,4 @@
-import { createCookieSessionStorage } from "@remix-run/node";
+import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator } from "remix-auth";
 import { Auth0Strategy } from "remix-auth-auth0";
 
@@ -6,7 +6,7 @@ import { Auth0Strategy } from "remix-auth-auth0";
 const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "_auth_session",
-    sameSite: "lax",
+    sameSite: "none",
     path: "/",
     httpOnly: true,
     secrets: ["ZySbrdFDYXG2o/a6XG+XaTQp7fSoKsbGBnTcXkQ7Uzc="],
