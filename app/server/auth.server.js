@@ -9,7 +9,7 @@ const sessionStorage = createCookieSessionStorage({
     sameSite: "lax",
     path: "/",
     httpOnly: true,
-    secrets: ["ZySbrdFDYXG2o/a6XG+XaTQp7fSoKsbGBnTcXkQ7Uzc="],
+    secrets: [process.env.SESSION_SECRET || "a_fallback_secret_for_development_only"],
     secure: process.env.NODE_ENV === "production",
     maxAge: 60 * 60 * 24 * 7, //7 ngày
   },
