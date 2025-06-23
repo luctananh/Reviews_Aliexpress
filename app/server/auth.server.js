@@ -9,7 +9,7 @@ const sessionStorage = createCookieSessionStorage({
     sameSite: "none",
     path: "/",
     httpOnly: true,
-    secrets: [process.env.SESSION_SECRET || "a_fallback_secret_for_development_only"], // Sử dụng biến môi trường
+    secrets: [process.env.SESSION_SECRET || "a_fallback_secret_for_development_only"],
     secure: process.env.NODE_ENV === "production",
     maxAge: 60 * 60 * 24 * 7, //7 ngày
   },
@@ -39,7 +39,7 @@ export const logout = async (request) => {
   const session = await sessionStorage.getSession(
     request.headers.get("Cookie")
   );
-  return redirect(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : "/", { // Sử dụng biến động
+  return redirect(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : "/", {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },

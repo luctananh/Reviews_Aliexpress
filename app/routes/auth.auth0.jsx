@@ -3,7 +3,7 @@ import { authenticator } from "../server/auth.server.js";
 export const loader = ({ request }) => {
   const url = new URL(request.url);
   const prompt = url.searchParams.get("prompt");
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""; // Đảm bảo baseUrl được định nghĩa
+  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "";
   return authenticator.authenticate("auth0", request, {
     successRedirect: `${baseUrl}/products`,
     failureRedirect: "/",
@@ -13,7 +13,7 @@ export const loader = ({ request }) => {
   });
 };
 export const action = ({ request }) => {
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""; // Đảm bảo baseUrl được định nghĩa
+  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "";
   return authenticator.authenticate("auth0", request, {
     successRedirect: `${baseUrl}/products`,
     failureRedirect: `${baseUrl}/loi`,
