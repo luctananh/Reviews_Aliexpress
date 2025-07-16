@@ -32,6 +32,7 @@ const auth0Strategy = new Auth0Strategy(
     return profile;
   }
 );
+authenticator.use(auth0Strategy);
 export const logout = async (request) => {
   const session = await sessionStorage.getSession(
     request.headers.get("Cookie")
