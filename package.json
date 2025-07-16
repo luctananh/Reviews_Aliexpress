@@ -4,11 +4,11 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "rimraf build && vite build",
+    "build": "remix vite:build",
     "postinstall": "prisma generate",
-    "dev": "remix dev",
+    "dev": "remix vite:dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "remix-serve ./build/index.js"
+    "start": "remix-serve ./build/server/index.js"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
@@ -21,10 +21,13 @@
     "@react-aria/interactions": "^3.21.0",
     "@react-aria/utils": "^3.22.0",
     "@react-stately/utils": "^3.8.2",
-    "@remix-run/node": "^2.4.1",
-    "@remix-run/react": "^2.4.1",
-    "@remix-run/serve": "^2.4.1",
-    "@vercel/remix": "^2.4.1",
+    "@remix-run/dev": "^2.15.3",
+    "@remix-run/node": "^2.15.3",
+    "@remix-run/react": "^2.15.3",
+    "@remix-run/serve": "^2.15.3",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.50.0",
+    "@vercel/remix": "^2.16.6",
     "axios": "^1.7.7",
     "cheerio": "^1.0.0",
     "cloudinary": "^2.5.0",
@@ -43,7 +46,6 @@
     "sonner": "^1.5.0"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.16.8",
     "autoprefixer": "^10.4.19",
     "concurrently": "^9.0.1",
     "eslint": "^8.38.0",
