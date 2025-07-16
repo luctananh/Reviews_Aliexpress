@@ -2,10 +2,8 @@
 import { useState } from "react";
 import { Button, ButtonGroup } from "@nextui-org/react";
 import { Link } from "@nextui-org/react";
-import { Form, useLoaderData, useFetcher } from "@remix-run/react";
-import { json } from "@remix-run/node";
-// import { createClient } from "~/utils/supabase.server";
-import { createClient } from "../utils/supabase.server";
+import { Form } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import "../styles/index.css";
 import {
   Navbar,
@@ -19,24 +17,17 @@ import {
 // import { action as LoginSite } from "./auth.auth0";
 export const meta = () => {
   return [
-    { title: "importify" },
-    { name: "import review aliexpress", content: "crawl review aliexpress" },
+    { title: "New Remix App" },
+    { name: "description", content: "Welcome to Remix!" },
   ];
 };
 
-export async function loader({ request }) {
-  const supabase = createClient(request);
-  const { data: todos } = await supabase.from('todos').select();
-  return json({ todos });
-}
-
 export default function Index() {
-  const { todos } = useLoaderData();
   const fetcher = useFetcher();
   const fetcher2 = useFetcher();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleAuth0Login = () => {
-    fetcher.load("/auth/auth0?prompt=login");
+    fetcher.submit(null, { method: "post", action: "/auth/auth0" });
   };
   const logout = () => {
     fetcher2.submit(null, { method: "post", action: "/auth/logout" });
@@ -93,8 +84,8 @@ export default function Index() {
                     index === 2
                       ? "primary"
                       : index === menuItems.length - 1
-                        ? "danger"
-                        : "foreground"
+                      ? "danger"
+                      : "foreground"
                   }
                   className="w-full"
                   href="#"
@@ -111,11 +102,6 @@ export default function Index() {
         <div className="background">
           <img src="./banner.jpg" alt="banner" />
         </div>
-        <ul>
-          {todos && todos.map((todo) => (
-            <li key={todo.id}>{todo.name}</li>
-          ))}
-        </ul>
       </body>
     </>
   );
