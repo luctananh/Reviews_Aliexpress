@@ -22,7 +22,7 @@ export const authenticator = new Authenticator(sessionStorage);
 // Cấu hình Auth0 strategy https://importify.io/auth/auth0/callback
 const auth0Strategy = new Auth0Strategy(
   {
-    callbackURL: "https://dev-qoakuhj30oocsvf4.us.auth0.com/authorize",
+    callbackURL: process.env.AUTH0_CALLBACK_URL,
     clientID: process.env.AUTH0_CLIENT_ID,
     clientSecret: process.env.AUTH0_CLIENT_SECRET,
     domain: process.env.AUTH0_DOMAIN,
