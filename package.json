@@ -4,7 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "remix build",
+    "build": "rimraf build && vite build",
     "postinstall": "prisma generate",
     "dev": "remix dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
@@ -21,7 +21,6 @@
     "@react-aria/interactions": "^3.21.0",
     "@react-aria/utils": "^3.22.0",
     "@react-stately/utils": "^3.8.2",
-    "@remix-run/dev": "^2.4.1",
     "@remix-run/node": "^2.4.1",
     "@remix-run/react": "^2.4.1",
     "@remix-run/serve": "^2.4.1",
@@ -44,6 +43,7 @@
     "sonner": "^1.5.0"
   },
   "devDependencies": {
+    "@remix-run/dev": "^2.16.8",
     "autoprefixer": "^10.4.19",
     "concurrently": "^9.0.1",
     "eslint": "^8.38.0",
