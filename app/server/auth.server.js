@@ -22,12 +22,10 @@ export const authenticator = new Authenticator(sessionStorage);
 // Cấu hình Auth0 strategy https://importify.io/auth/auth0/callback
 const auth0Strategy = new Auth0Strategy(
   {
-    callbackURL: process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}/auth/auth0/callback`
-      : process.env.AUTH0_CALLBACK_URL,
-    clientID: process.env.AUTH0_CLIENT_ID,
-    clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    domain: process.env.AUTH0_DOMAIN,
+    callbackURL: "https://importreview.vercel.app/homecallback",
+    clientID: "dev-qoakuhj30oocsvf4.us.auth0.com",
+    clientSecret: "BnuE2UxbjllBScUqRbXLrrop1DNh5yvv9LW6S3csSbwcA59mNp2iX0YKsF5mUNv_",
+    domain: "dev-qoakuhj30oocsvf4.us.auth0.com",
     scope: "openid profile email",
   },
   async ({ accessToken, refreshToken, extraParams, profile }) => {
