@@ -22,7 +22,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   //change to reference a table in your schema
-  const val = await prisma.production.findMany({
+  const val = await prisma.user.findMany({
     take: 10,
   });
   console.log(val);
