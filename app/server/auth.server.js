@@ -23,8 +23,8 @@ export const authenticator = new Authenticator(sessionStorage);
 const auth0Strategy = new Auth0Strategy(
   {
     callbackURL: "https://importreview.vercel.app/homecallback",
-    clientID: "dev-qoakuhj30oocsvf4.us.auth0.com",
-    clientSecret: "BnuE2UxbjllBScUqRbXLrrop1DNh5yvv9LW6S3csSbwcA59mNp2iX0YKsF5mUNv_",
+    clientID: process.env.AUTH0_CLIENT_ID,
+    clientSecret: process.env.AUTH0_CLIENT_SECRET,
     domain: "dev-qoakuhj30oocsvf4.us.auth0.com",
     scope: "openid profile email",
   },
@@ -32,7 +32,6 @@ const auth0Strategy = new Auth0Strategy(
     return profile;
   }
 );
-authenticator.use(auth0Strategy);
 export const logout = async (request) => {
   const session = await sessionStorage.getSession(
     request.headers.get("Cookie")
