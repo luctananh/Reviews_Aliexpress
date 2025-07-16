@@ -17,9 +17,10 @@ const sessionStorage = createCookieSessionStorage({
 export const { getSession, commitSession, destroySession } = sessionStorage;
 
 // Tạo authenticator
-export const authenticator = new Authenticator(sessionStorage);
-
-// Cấu hình Auth0 strategy https://importify.io/auth/auth0/callback
+export const authenticator = new Authenticator(sessionStorage, {
+  throwOnError: true // Enable throwing errors
+});
+// Cấu hình Auth0 strategy 
 const auth0Strategy = new Auth0Strategy(
   {
     callbackURL: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/homecallback` : "http://localhost:3000/homecallback",
@@ -29,10 +30,12 @@ const auth0Strategy = new Auth0Strategy(
     scope: "openid profile email",
   },
   async ({ accessToken, refreshToken, extraParams, profile }) => {
+    if (!profile) {
+      throw new Error("Authentication failed"); 
+    }
     return profile;
   }
 );
-authenticator.use(auth0Strategy);
 export const logout = async (request) => {
   const session = await sessionStorage.getSession(
     request.headers.get("Cookie")
