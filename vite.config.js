@@ -12,16 +12,19 @@ export default defineConfig({
       future: {
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
-        v3_throwAbortReason: true,
-      },
-    }),
+        v3_throwAbortReason: true
+      }
+    })
   ],
   ssr: {
     noExternal: [
       /@tanstack\/.*/,
       /@nextui-org\/.*/,
       /@react-aria\/.*/,
-      /@react-stately\/.*/,
-    ],
+      /@react-stately\/.*/
+    ]
   },
+  optimizeDeps: {
+    include: ['@rollup/rollup-linux-x64-gnu']
+  }
 });
