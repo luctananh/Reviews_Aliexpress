@@ -1,7 +1,7 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 export default {
   // Build server output vào đúng thư mục cần thiết cho deploy
-  serverBuildPath: "build/index.js",
+  serverBuildPath: "build/server/index.js",
   // Nếu dùng Remix v2, bạn có thể bật các future flags này:
   future: {
     v2_errorBoundary: true,

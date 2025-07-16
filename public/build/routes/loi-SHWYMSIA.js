@@ -1,0 +1,1 @@
+import{b as f}from"/build/_shared/chunk-F33EF4G7.js";import{d as o}from"/build/_shared/chunk-2QEWK57A.js";var n=o(f(),1);function l(){return(0,n.jsx)("h1",{children:"l\u1ED7i dang nh\u1EADp"})}export{l as default};
