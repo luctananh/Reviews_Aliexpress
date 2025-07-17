@@ -21,7 +21,9 @@ export default defineConfig({
       /@tanstack\/.*/,
       /@nextui-org\/.*/,
       /@react-aria\/.*/,
-      /@react-stately\/.*/
+      /@react-stately\/.*/,
+      "react-textarea-autosize",
+      "framer-motion"
     ]
   },
   optimizeDeps: {
