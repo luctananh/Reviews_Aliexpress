@@ -20,6 +20,7 @@
     "@prisma/client": "^5.20.0",
     "@react-aria/interactions": "^3.21.0",
     "@react-aria/utils": "^3.22.0",
+    "@react-stately/collections": "^3.12.5",
     "@react-stately/utils": "^3.8.2",
     "@remix-run/dev": "^2.15.3",
     "@remix-run/node": "^2.15.3",
