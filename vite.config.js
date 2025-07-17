@@ -16,7 +16,7 @@ export default defineConfig({
       }
     })
   ],
-  ssr: {
+ssr: {
     noExternal: [
       /@tanstack\/.*/,
       /@nextui-org\/.*/,
@@ -27,7 +27,14 @@ export default defineConfig({
     ]
   },
   optimizeDeps: {
-    include: ['@rollup/rollup-linux-x64-gnu']
+    include: ['@rollup/rollup-linux-x64-gnu', '@react-stately/collections'],
+    exclude: []
+  },
+  server: {
+    fs: {
+      strict: false,
+      fileDescriptorLimit: 8192
+    }
   }
 });
 // import { vitePlugin as remix } from "@remix-run/dev";
