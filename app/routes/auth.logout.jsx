@@ -2,17 +2,18 @@ import { redirect } from "@remix-run/node";
 import { authenticator } from "../server/auth.server.js";
 
 export const action = async ({ request }) => {
-  const auth0Domain = process.env.AUTH0_DOMAIN;
-  const clientId = process.env.AUTH0_CLIENT_ID;
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}`
-    : "";
-  const returnTo = `${baseUrl}/`;
+  const auth0Domain = "dev-qoakuhj30oocsvf4.us.auth0.com";
+  const clientId = "zirqgvWtSPptB2eAZx2LHKsKc76i2jnV";
+  const returnTo = "http://importreview.vercel.app/";
+
   await authenticator.logout(request, {
-    redirectTo: returnTo,
+    redirectTo: "http://importreview.vercel.app/",
   });
+
   return redirect(
-    `https://${auth0Domain}/v2/logout?client_id=${clientId}&returnTo=${encodeURIComponent(returnTo)}`
+    `https://${auth0Domain}/v2/logout?client_id=${clientId}&returnTo=${encodeURIComponent(
+      returnTo
+    )}`
   );
 };
 

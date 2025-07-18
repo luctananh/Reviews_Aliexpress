@@ -3,22 +3,22 @@ import { authenticator } from "../server/auth.server.js";
 export const loader = ({ request }) => {
   const url = new URL(request.url);
   const prompt = url.searchParams.get("prompt");
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "";
   return authenticator.authenticate("auth0", request, {
-    successRedirect: `${baseUrl}/products`,
+    successRedirect: "https://importreview.vercel.app/products",
     failureRedirect: "/",
     authParams: {
       prompt: prompt || "login",
     },
   });
 };
+
 export const action = ({ request }) => {
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "";
   return authenticator.authenticate("auth0", request, {
-    successRedirect: `${baseUrl}/products`,
-    failureRedirect: `${baseUrl}/loi`,
+    successRedirect: "https://importreview.vercel.app/products",
+    failureRedirect: "https://importreview.vercel.app/loi",
   });
 };
+
 export default function Auth0Route() {
   return null;
 }

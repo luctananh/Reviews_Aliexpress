@@ -1,10 +1,3 @@
-- Thêm ".env"
-  + DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
-  + AUTH0_DOMAIN = add Domain auth0
-  + AUTH0_CLIENT_ID = add clientID auth0
-  + AUTH0_CLIENT_SECRET= add clientSecret auth0
-  + AUTH0_CALLBACK_URL = add callbackURL auth0
-  + SESSION_SECRET = Add
 # Welcome to Remix!
 
 - 📖 [Remix docs](https://remix.run/docs)

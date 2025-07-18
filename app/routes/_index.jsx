@@ -17,8 +17,8 @@ import {
 // import { action as LoginSite } from "./auth.auth0";
 export const meta = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "importify" },
+    { name: "import review aliexpress", content: "crawl review aliexpress" },
   ];
 };
 
@@ -27,7 +27,7 @@ export default function Index() {
   const fetcher2 = useFetcher();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleAuth0Login = () => {
-    fetcher.submit(null, { method: "post", action: "/auth/auth0" });
+    fetcher.load("/auth/auth0?prompt=login");
   };
   const logout = () => {
     fetcher2.submit(null, { method: "post", action: "/auth/logout" });

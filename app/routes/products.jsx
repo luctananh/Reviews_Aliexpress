@@ -3,6 +3,8 @@ import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { PrismaClient } from "@prisma/client";
 import { NavLink, useNavigation } from "react-router-dom";
+import { useEffect } from "react";
+import NProgress from "nprogress";
 import { useState } from "react";
 import "../styles/home.css";
 import "../styles/Navigation.css";
@@ -102,6 +104,13 @@ export default function Home() {
   const [searchParams] = useSearchParams();
   const navigation = useNavigation();
 
+  useEffect(() => {
+    if (navigation.state === "loading") {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+  }, [navigation.state]);
   const initialTab = searchParams.get("tab") || "Products";
   const [activeTab, setActiveTab] = useState(initialTab);
 
@@ -121,7 +130,13 @@ export default function Home() {
   const logout = () => {
     fetcher.submit(null, { method: "post", action: "/auth/logout" });
   };
-
+  const handleClick = () => {
+    NProgress.start(); // Bắt đầu thanh loading
+    setTimeout(() => {
+      navigate("/Insert/product"); // Điều hướng sau khi loading
+      NProgress.done(); // Kết thúc thanh loading
+    }, 500); // Thời gian delay để thanh loading hiển thị
+  };
   return (
     <>
       <Navbar className="custom-navbar2">
@@ -194,7 +209,7 @@ export default function Home() {
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/review_table" activeClassName="active">
+                <NavLink to="/ListReviews" activeClassName="active">
                   <div className="nava_product">
                     <img src="/review.svg" alt="review-icon" />
                     <p>Reviews</p>
@@ -222,7 +237,7 @@ export default function Home() {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/review_table" activeClassName="active">
+                  <NavLink to="/ListReviews" activeClassName="active">
                     Reviews
                   </NavLink>
                 </li>
@@ -236,10 +251,15 @@ export default function Home() {
           </div>
           <div className="card_text2">
             <h1>Proructs</h1>
-            <Link className="add_button" to="/Insert_product">
-              <Button color="default" radius="sm" variant="faded">
+            <Link className="add_button" to="/Insert/product">
+              <Button
+                onClick={handleClick}
+                color="default"
+                radius="sm"
+                variant="faded"
+              >
                 <img src="./plus.svg" alt="add_button" />
-                Add product
+                <p>Add product</p>
               </Button>
             </Link>
           </div>
