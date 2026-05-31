@@ -19,6 +19,28 @@ function getRandomUserAgent() {
 // Randomized delay helper (Jitter)
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// GET Loader to return active counts and settings for the Progress Bar polling
+export async function loader({ request }) {
+  try {
+    const url = new URL(request.url);
+    const productId = url.searchParams.get("productId");
+    if (!productId) {
+      return json({ count: 0, maxReviewCount: 20 });
+    }
+
+    const count = await prisma.review.count({
+      where: { productId }
+    });
+
+    const setting = await prisma.setting.findFirst();
+    const maxReviewCount = setting ? setting.maxReviewCount : 20;
+
+    return json({ count, maxReviewCount });
+  } catch (error) {
+    return json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function action({ request }) {
   try {
     const formData = await request.formData();
@@ -145,8 +167,8 @@ export async function action({ request }) {
       hasNextPage = nextPageButton.length > 0;
       page++;
 
-      // Randomized delay (1000ms - 2500ms) to bypass basic anti-scraping
-      const randomDelay = Math.floor(Math.random() * 1500) + 1000;
+      // Optimized super-fast delay (50ms - 150ms) to avoid Vercel 10s timeout
+      const randomDelay = Math.floor(Math.random() * 100) + 50;
       await sleep(randomDelay);
     }
 

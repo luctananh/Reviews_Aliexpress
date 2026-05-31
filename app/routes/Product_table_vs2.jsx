@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input, Progress } from "@nextui-org/react";
 import { useLoaderData, Form, useFetcher, Link } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { prisma } from "../server/db.server";
@@ -60,6 +60,8 @@ export default function ProductTable() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading1, setIsLoading1] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isImporting, setIsImporting] = useState(false);
   const navigation = useNavigation();
   const navigate = useNavigate();
   useEffect(() => {
@@ -93,6 +95,13 @@ export default function ProductTable() {
   // const [selectAll, setSelectAll] = useState(false);
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data) {
+      if (window.importInterval) {
+        clearInterval(window.importInterval);
+        window.importInterval = null;
+      }
+      setIsImporting(false);
+      setProgress(100);
+
       if (fetcher.data.success) {
         toast.success("Reviews imported successfully!");
         setTimeout(() => {
@@ -187,7 +196,24 @@ export default function ProductTable() {
       toast.error("Please enter a valid product URL");
       return;
     }
+    
     setIsLoading1(true); // Bật spinner khi bắt đầu cào dữ liệu
+    setIsImporting(true);
+    setProgress(0);
+
+    let startCount = 0;
+    let maxReviewCount = 20;
+
+    try {
+      // Fetch initial review count and max settings from our new GET loader
+      const res = await fetch(`/import_review?productId=${selectedProduct?.id}`);
+      const data = await res.json();
+      startCount = data.count || 0;
+      maxReviewCount = data.maxReviewCount || 20;
+    } catch (e) {
+      console.error("Failed to fetch initial stats:", e);
+    }
+
     const formData = new FormData();
     formData.append("_actionType", "import_reviews");
     formData.append("productURL", productURL);
@@ -198,6 +224,25 @@ export default function ProductTable() {
       method: "post",
       action: "/import_review",
     });
+
+    // Start DB Polling every 1 second
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/import_review?productId=${selectedProduct?.id}`);
+        const data = await res.json();
+        const currentCount = data.count || 0;
+        const imported = currentCount - startCount;
+        
+        if (imported >= 0) {
+          const currentProgress = Math.min(99, Math.round((imported / maxReviewCount) * 100));
+          setProgress(currentProgress);
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+      }
+    }, 1000);
+
+    window.importInterval = interval;
   };
   // checkbox cho từng product
   // const handleSelectProduct = (productId) => {
@@ -321,6 +366,21 @@ export default function ProductTable() {
                                 name="_actionType"
                                 defaultValue="URLproduct"
                               />
+                              {isImporting && (
+                                <div className="w-full mt-4 flex flex-col gap-2">
+                                  <Progress
+                                    aria-label="Importing progress"
+                                    size="md"
+                                    value={progress}
+                                    color="success"
+                                    showValueLabel={true}
+                                    className="max-w-md"
+                                  />
+                                  <p className="text-xs text-gray-500 text-center animate-pulse">
+                                    Đang tải đánh giá từ AliExpress... ({progress}%)
+                                  </p>
+                                </div>
+                              )}
                             </ModalBody>
                             <ModalFooter>
                               <Button
