@@ -2,36 +2,47 @@ import { json } from "@remix-run/node";
 import { prisma } from "../server/db.server";
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { v4 as uuidv4 } from "uuid";
 
-const reviewQueue = [];
-let isProcessing = false;
+// List of realistic User-Agents for rotation
+const USER_AGENTS = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+];
 
-async function processQueue() {
-  if (isProcessing || reviewQueue.length === 0) return; //kiểm tra xem có đang xử lý yêu cầu nào không
-  isProcessing = true;
-  /* lấy yêu cầu đầu tiền trong hàng đợi */
-  const { request, formData, resolve, reject, jobId } = reviewQueue.shift();
+function getRandomUserAgent() {
+  return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+}
+
+// Randomized delay helper (Jitter)
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function action({ request }) {
   try {
-    const formBody = new URLSearchParams(await request.text());
-    const link = formBody.get("productURL");
-    const actionType = formBody.get("_actionType");
-    const productId = formBody.get("productId");
+    const formData = await request.formData();
+    const link = formData.get("productURL");
+    const productId = formData.get("productId");
+
     if (!link || !productId) {
-      console.log(`Job ${jobId} failed: Missing product link or product ID`);
-      resolve(
-        json(
-          { error: "Please enter a product link and product ID!" },
-          { status: 400 }
-        )
+      return json(
+        { error: "Please enter a product link and product ID!" },
+        { status: 400 }
       );
-      return;
     }
+
+    // Read maximum reviews settings
     const setting = await prisma.setting.findFirst();
     const maxReviewCount = setting ? setting.maxReviewCount : 20;
+
+    // Parse AliExpress Product ID
     const parts = link.split("/");
     const lastSegment = parts.pop() || parts.pop();
     const aliProductId = lastSegment.split(".")[0];
+
+    // Read Cloudflare Worker Proxy URL from Env or use a empty fallback for testing
+    const proxyBaseUrl = process.env.CLOUDFLARE_WORKER_PROXY_URL || "";
 
     let allReviews = [];
     let page = 1;
@@ -39,7 +50,20 @@ async function processQueue() {
 
     while (hasNextPage && allReviews.length < parseInt(maxReviewCount)) {
       const feedbackUrl = `https://feedback.aliexpress.com/display/productEvaluation.htm?v=2&productId=${aliProductId}&ownerMemberId=2668009148&companyId=2668009148&memberType=seller&startValidDate=&i18n=true&page=${page}`;
-      const response = await axios.get(feedbackUrl);
+      
+      // Determine request URL (through proxy if configured, else direct)
+      const requestUrl = proxyBaseUrl 
+        ? `${proxyBaseUrl}?url=${encodeURIComponent(feedbackUrl)}`
+        : feedbackUrl;
+
+      // Make the request with randomized User-Agent
+      const response = await axios.get(requestUrl, {
+        headers: {
+          "User-Agent": getRandomUserAgent(),
+          "Accept-Language": "en-US,en;q=0.9",
+        }
+      });
+
       const $ = cheerio.load(response.data);
       const reviews = $(".feedback-item")
         .map((index, element) => {
@@ -59,6 +83,7 @@ async function processQueue() {
           let reviewImage =
             $(element).find(".feedback-photo img").attr("src") ||
             $(element).find("img").attr("src");
+          
           let reviewRatingValue;
           switch (reviewRating) {
             case "width:100%":
@@ -89,50 +114,48 @@ async function processQueue() {
           };
         })
         .get();
+
+      // If no reviews found on page, break early
+      if (reviews.length === 0) {
+        break;
+      }
+
+      // Save reviews to DB
       for (let review of reviews) {
         if (allReviews.length >= parseInt(maxReviewCount)) break;
         await prisma.review.create({
           data: {
-            userName: review.name,
+            userName: review.name || "Anonymous",
             userAvatar: "",
-            userContry: review.country,
-            productImage: review.image,
-            reviewContent: review.feedback,
+            userContry: review.country || "",
+            productImage: review.image || "",
+            reviewContent: review.feedback || "",
             rating: review.rating,
             productId: productId,
           },
         });
+        allReviews.push(review);
       }
-      allReviews = allReviews.concat(reviews);
+
       if (allReviews.length >= parseInt(maxReviewCount)) break;
+
       const nextPageButton = $(
         ".ui-pagination-next:not(.ui-pagination-disabled)"
       );
       hasNextPage = nextPageButton.length > 0;
       page++;
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-    console.log(`Job ${jobId} succeeded: Reviews fetched successfully`);
-    resolve(json({ success: "Reviews fetched successfully!" }));
-  } catch (error) {
-    console.error(`Job ${jobId} failed:`, error.message);
-    reject(
-      json(
-        { error: "An error occurred while fetching reviews" },
-        { status: 500 }
-      )
-    );
-  } finally {
-    isProcessing = false;
-    processQueue();
-  }
-}
 
-export async function action({ request, formData }) {
-  return new Promise((resolve, reject) => {
-    const jobId = uuidv4();
-    reviewQueue.push({ request, formData, resolve, reject, jobId });
-    console.log(`Job ${jobId} added to the queue`);
-    processQueue();
-  });
+      // Randomized delay (1000ms - 2500ms) to bypass basic anti-scraping
+      const randomDelay = Math.floor(Math.random() * 1500) + 1000;
+      await sleep(randomDelay);
+    }
+
+    return json({ success: `Successfully fetched and saved ${allReviews.length} reviews!` });
+  } catch (error) {
+    console.error("Scraping error:", error.message);
+    return json(
+      { error: `Failed to fetch reviews: ${error.message}` },
+      { status: 500 }
+    );
+  }
 }
